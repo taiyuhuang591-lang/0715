@@ -43,13 +43,18 @@ jobs:
 
       - name: Update Config Repo
         env:
-          CONFIG_REPO_TOKEN: ${{ secrets.CONFIG_REPO_TOKEN }}
+          CONFIG_REPO_SSH_KEY: ${{ secrets.CONFIG_REPO_SSH_KEY }}
         run: |
-          if [ -z "$CONFIG_REPO_TOKEN" ]; then
-            echo "::warning::CONFIG_REPO_TOKEN 未設，略過更新 Config Repo（image 已推上 GHCR）"
+          if [ -z "$CONFIG_REPO_SSH_KEY" ]; then
+            echo "::warning::CONFIG_REPO_SSH_KEY 未設，略過更新 Config Repo（image 已推上 GHCR）"
             exit 0
           fi
-          git clone https://x-access-token:${CONFIG_REPO_TOKEN}@github.com/taiyuhuang591-lang/devops-config.git
+          install -m 700 -d ~/.ssh
+          echo "$CONFIG_REPO_SSH_KEY" > ~/.ssh/config_repo
+          chmod 600 ~/.ssh/config_repo
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/config_repo -o IdentitiesOnly=yes"
+          git clone git@github.com:taiyuhuang591-lang/devops-config.git
           cd devops-config
           sed -i "s|image: ghcr.io/.*|image: ghcr.io/taiyuhuang591-lang/0715:${{ github.sha }}|" k8s/deployment.yaml
           git config user.name "github-actions"
