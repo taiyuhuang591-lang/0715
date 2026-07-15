@@ -16,6 +16,7 @@ def test_root_has_version():
     r = client.get("/")
     assert r.status_code == 200
     assert "version" in r.json()
+    assert r.json()["build"] == "v2"
 
 
 def test_login_empty_email():
