@@ -30,3 +30,7 @@ def test_login_ok():
     r = client.post("/login", json={"email": "a@b.com", "password": "x"})
     assert r.status_code == 200
     assert "welcome" in r.json()["message"]
+
+
+def test_pipeline_blocks_broken_code():
+    assert 1 == 2, "Intentional failure: verify CI blocks merge"
