@@ -2,6 +2,7 @@
 
 一路用到：pytest（單元測試）、GitHub Actions（CI）、Docker、K8S、ArgoCD。
 """
+
 import os
 
 from fastapi import FastAPI
@@ -19,7 +20,7 @@ app.include_router(login_router)
 @app.get("/")
 def root():
     # version 字串之後做 blue-green / canary、確認新版上線時會用到
-    return {"service": "hello", "version1": VERSION, "build": "v2"}
+    return {"service": "hello", "version": VERSION, "build": "v2"}
 
 
 @app.get("/health")
